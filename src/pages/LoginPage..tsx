@@ -1,9 +1,9 @@
 import Footer from 'components/Footer'
 import Header from 'components/Header'
-import SignUpBox from 'components/SignUpBox'
+import LoginBox from 'components/LoginBox'
 import type { ReactElement } from 'react'
 
-export default function SignUpPage(): ReactElement {
+export default function LoginPage(): ReactElement {
 	return (
 		<div className='flex min-h-screen flex-col bg-white'>
 			<Header />
@@ -24,7 +24,7 @@ export default function SignUpPage(): ReactElement {
 				</div>
 			</div>
 			<div className='absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform'>
-				<SignUpBox />
+				<LoginBox />
 			</div>
 			<Footer />
 		</div>

@@ -1,48 +1,39 @@
 import PersonIcon from '@mui/icons-material/Person'
-import Button from '@mui/material/Button'
+import Footer from 'components/Footer'
 import Header from 'components/Header'
 import type { ReactElement } from 'react'
 
 export default function LandingPage(): ReactElement {
 	return (
-		<div className='flex w-full flex-row justify-center bg-white'>
-			<div className='h-[1024px] w-[1440px] overflow-hidden bg-white'>
-				<div className='relative h-[1024px] w-[1442px]'>
-					<div className='absolute left-0 top-0 h-[1024px] w-[1442px]'>
-						<img
-							className='absolute left-[582px] top-[106px] h-[884px] w-[858px] object-cover mix-blend-multiply'
-							alt='Banner'
-							src='/assets/banner.png'
-						/>
-						<div className='absolute left-0 top-[963px] h-[61px] w-[1442px]'>
-							<div className='relative h-[61px] w-[1440px] bg-[#2d3752] shadow-[0px_4px_4px_#00000052]'>
-								<p className="absolute left-[46px] top-[23px] w-[1156px] text-[16px] font-normal leading-[normal] tracking-[3.20px] text-white [font-family:'Inter-Regular',Helvetica]">
-									CONTIFY © 2023 . All rights reserved.
-								</p>
-							</div>
-						</div>
-						<Header />
-					</div>
-					<div className='absolute left-[101px] top-[559px] h-[69px] w-[375px]'>
-						<Button href='/signup'>
-							<div className='relative h-[69px] w-[373px] rounded-[48px] bg-[#1b3a6f]'>
-								<div className="absolute left-[99px] top-[23px] text-[19px] font-bold leading-[normal] tracking-[2.85px] text-white [font-family:'Inter-Bold',Helvetica]">
-									Get Started Now !
-								</div>
-
-								<PersonIcon className='absolute left-[67px] top-[22px] h-[22px] w-[22px] text-white' />
-							</div>
-						</Button>
-					</div>
-					<p className="absolute left-[59px] top-[469px] whitespace-nowrap text-[20px] font-normal leading-[normal] tracking-[3.00px] text-black [font-family:'Inter-Regular',Helvetica]">
-						Sign up now and get started for free!
-					</p>
-					<p className="absolute left-[59px] top-[379px] text-[34px] font-bold leading-[normal] tracking-[5.10px] text-black [font-family:'Inter-Bold',Helvetica]">
+		<div className='flex min-h-screen flex-col bg-white'>
+			<Header />
+			<div className='flex flex-col items-center px-4 md:flex-row'>
+				<div className='flex flex-col items-center md:w-1/2'>
+					<p className='text-2xl font-bold leading-normal tracking-wider text-black md:text-4xl'>
 						The Ultimate Contact <br />
 						Management Solution
 					</p>
+					<p className='text-lg font-normal leading-normal tracking-wider text-black md:text-xl'>
+						Sign up now and get started for free!
+					</p>
+					<a href='/signup'>
+						<div className='mt-4 flex h-16 w-64 items-center justify-center rounded-full bg-[#1b3a6f]'>
+							<PersonIcon className='ml-2 mr-2 h-6 w-6 text-white' />
+							<div className='text-lg font-bold text-white'>
+								Get Started Now !
+							</div>
+						</div>
+					</a>
+				</div>
+				<div className='h-full w-full md:ml-auto md:w-[43%]'>
+					<img
+						className='h-full w-full object-cover mix-blend-multiply'
+						alt='Banner'
+						src='/assets/banner.png'
+					/>
 				</div>
 			</div>
+			<Footer />
 		</div>
 	)
 }

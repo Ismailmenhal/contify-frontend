@@ -28,9 +28,11 @@
 		"@mui/icons-material": "^5.14.16",
 		"@mui/material": "^5.14.17",
 		"@tanstack/react-query": "4.36.1",
+		"formik": "^2.4.5",
 		"react": "18.2.0",
 		"react-dom": "18.2.0",
-		"react-router-dom": "6.16.0"
+		"react-router-dom": "6.16.0",
+		"yup": "^1.3.2"
 	},
 	"devDependencies": {
 		"@nabla/vite-plugin-eslint": "1.5.0",
