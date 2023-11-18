@@ -1,27 +1,25 @@
+import { effect, signal } from '@preact/signals-react'
 import LoadingOrError from 'components/LoadingOrError'
 import SideBar from 'components/SideBar'
 import AllPeople from 'pages/AllPeople'
 import LandingPage from 'pages/HomePage'
 import LoginPage from 'pages/LoginPage.'
-
 import SignUpPage from 'pages/SignUp'
 import type { ReactElement } from 'react'
-import { Suspense, useEffect, useState } from 'react'
+import { Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
+const pages = new Set(['/allPeople'])
+const showDrawer = signal(false)
+
+effect(() => {
+	showDrawer.value = !!pages.has(window.location.pathname)
+})
+
 export default function App(): ReactElement {
-	const pages = new Set(['/allPeople'])
-	const [showDrawer, setshowDrawer] = useState(false)
-	useEffect(() => {
-		if (pages.has(location.pathname)) {
-			setshowDrawer(true)
-		} else {
-			setshowDrawer(false)
-		}
-	}, [location.pathname])
 	return (
 		<BrowserRouter>
-			<SideBar path={location.pathname} showDrawer={showDrawer}>
+			<SideBar path={window.location.pathname} showDrawer={showDrawer.value}>
 				<Suspense fallback={<LoadingOrError />}>
 					<Routes>
 						<Route path='/signup' element={<SignUpPage />} />

@@ -9,9 +9,19 @@ import {
 import BookmarkIcon from '@mui/icons-material/Bookmark'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Box } from '@mui/material'
-import { useEffect, useState, type ReactElement } from 'react'
+import type { ReactElement } from 'react'
+import { useEffect, useState } from 'react'
 
-export default function SideBar({ children, path, showDrawer }): ReactElement {
+interface SideBarProperties {
+	children: ReactElement
+	path: string
+	showDrawer: boolean
+}
+export default function SideBar({
+	children,
+	path,
+	showDrawer
+}: SideBarProperties): ReactElement {
 	const [isSmall, setIsSmall] = useState(false)
 	const [isOpen, setIsOpen] = useState(false)
 
@@ -34,11 +44,11 @@ export default function SideBar({ children, path, showDrawer }): ReactElement {
 	}
 
 	return (
-		<Box sx={{ overflow: 'hidden' }}>
+		<Box className='flex h-[100vh] overflow-hidden'>
 			{showDrawer ? (
-				<Box>
+				<Box className='flex-shrink-0'>
 					<div
-						className={`fixed left-0 top-0 z-50 h-full ${
+						className={`z-50 h-full overflow-hidden  ${
 							isSmall ? (isOpen ? 'w-96' : 'w-16') : 'w-96'
 						} flex-shrink-0 transition-all duration-300`}
 					>
@@ -152,9 +162,17 @@ export default function SideBar({ children, path, showDrawer }): ReactElement {
 				</Box>
 			) : null}
 			{['/', '/login', '/signup'].includes(path) ? (
-				<Box component='main'>{children}</Box>
+				<Box component='main' className='w-screen'>
+					{children}
+				</Box>
 			) : (
-				<Box component='main'>{children}</Box>
+				<Box
+					component='main'
+					sx={{ flexGrow: 1, p: 3, width: { sm: `calc(100% - 240px)` } }}
+					className='mt-5 flex justify-center'
+				>
+					{children}
+				</Box>
 			)}
 		</Box>
 	)
