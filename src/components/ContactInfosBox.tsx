@@ -1,16 +1,104 @@
-import AddIcon from '@mui/icons-material/Add'
 import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined'
 import FmdGoodOutlinedIcon from '@mui/icons-material/FmdGoodOutlined'
 import LocalPhoneOutlinedIcon from '@mui/icons-material/LocalPhoneOutlined'
+import StarIcon from '@mui/icons-material/Star'
 import StarBorderPurple500OutlinedIcon from '@mui/icons-material/StarBorderPurple500Outlined'
 import VideocamOutlinedIcon from '@mui/icons-material/VideocamOutlined'
+import { Dialog, DialogContent } from '@mui/material'
 import Avatar from '@mui/material/Avatar'
 import Box from '@mui/material/Box'
-import type React from 'react'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import axios from 'axios'
+import { selectedContact } from 'pages/AllPeople'
+import type { ReactElement } from 'react'
+import { useState } from 'react'
+import type ITag from 'types/ITag'
+import AddContact, { contact } from './AddContact'
+import AffectTags from './affectTags'
 
-export default function ContactInfosBox(): React.ReactNode {
+interface ContactInfosBoxProperties {
+	id: string
+	fullName: string
+	phoneNumber: string
+	email: string
+	address: string
+	imageContact: string
+	tags: ITag[]
+	favorite: boolean
+}
+
+export default function ContactInfosBox({
+	id,
+	fullName,
+	phoneNumber,
+	email,
+	address,
+	imageContact,
+	tags,
+	favorite
+}: ContactInfosBoxProperties): ReactElement {
+	const headers = { 'Content-Type': 'application/json' }
+	const queryClient = useQueryClient()
+	const { mutate, isLoading: deleteContact } = useMutation({
+		mutationFn: async () =>
+			axios.delete(`/api/contact/deleteContactById/${id}`, {
+				headers
+			}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['contacts'] })
+			return true
+		},
+		onError: error => false
+	})
+	const { mutate: addToFavorite, isLoading: favoriteContact } = useMutation({
+		mutationFn: async () =>
+			axios.post(`/api/contact/favorite/${id}`, {
+				headers
+			}),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['contacts'] })
+			return true
+		},
+		onError: error => false
+	})
+
+	const onDeleteContact = () => {
+		if (confirm('Are you sure ?')) {
+			mutate()
+		}
+		window.location.reload()
+	}
+	const onFavoriteContact = () => {
+		addToFavorite()
+		window.location.reload()
+	}
+	const [open, setOpen] = useState(false)
+	const [openUpdate, setOpenUpdate] = useState(false)
+
+	const handleClickOpenUpdate = () => {
+		contact.value = {
+			...contact.value,
+			id,
+			fullName,
+			phoneNumber,
+			email,
+			address,
+			imagePath: imageContact
+		}
+		setOpenUpdate(true)
+	}
+	const handleCloseUpdate = () => {
+		setOpenUpdate(false)
+	}
+	const handleClickOpen = () => {
+		setOpen(true)
+	}
+	const handleClose = () => {
+		setOpen(false)
+	}
+
 	return (
 		<Box className='hidden h-[80vh] flex-col items-center md:w-[10vw] lg:w-[25vw] xl:flex'>
 			<Box
@@ -22,167 +110,165 @@ export default function ContactInfosBox(): React.ReactNode {
 					position: 'relative'
 				}}
 			>
-				<Box
-					sx={{
-						height: '335px',
-						borderRadius: '50px',
-						width: '100%',
-						backgroundColor: '#214789',
-						boxShadow: '0px 4px 4px #00000040',
-						position: 'absolute',
-						top: 0,
-						left: 0,
-						display: 'flex',
-						justifyContent: 'center',
-						alignItems: 'center'
-					}}
-				>
+				<Box className='flex h-[335px] w-full flex-col items-center justify-center gap-3 rounded-[50px] bg-[#214789] shadow-[0px_4px_4px_#00000040]'>
 					<Avatar
 						sx={{
 							width: '186px',
 							height: '186px',
 							objectFit: 'cover'
 						}}
+						className='shadow-md'
 						alt='Ellipse'
-						src='ellipse-8.png'
+						src={imageContact}
 					/>
-				</Box>
-			</Box>
-		</Box>
-	)
-}
-
-function ContactInfosBox1(): React.ReactNode {
-	return (
-		<Box sx={{ width: '100%', height: '100%' }}>
-			<Box
-				sx={{
-					position: 'fixed',
-					width: '21%',
-					height: '75%',
-					display: 'flex',
-					flexDirection: 'column',
-					alignItems: 'center'
-				}}
-			>
-				<Box
-					sx={{
-						position: 'relative',
-						width: '100%',
-						height: '100%',
-						backgroundColor: '#1b3a70',
-						borderRadius: '50px'
-					}}
-				>
-					<Box
-						sx={{
-							height: '335px',
-							borderRadius: '50px',
-							position: 'absolute',
-							width: '100%',
-							backgroundColor: '#214789',
-							boxShadow: '0px 4px 4px #00000040'
-						}}
-					/>
-					<Box
-						sx={{
-							height: '79px',
-							top: '642px',
-							borderRadius: '0px 0px 50px 50px',
-							position: 'absolute',
-							width: '100%',
-							backgroundColor: '#214789',
-							boxShadow: '0px 4px 4px #00000040'
-						}}
-					/>
-					<Avatar
-						sx={{
-							width: '186px',
-							height: '186px',
-							top: '41px',
-							left: '101px',
-							position: 'absolute',
-							objectFit: 'cover'
-						}}
-						alt='Ellipse'
-						src='ellipse-8.png'
-					/>
-					<div
-						className='absolute left-[134px] top-[229px] text-[19px] font-medium leading-[normal] tracking-[1.52px] text-white'
-						style={{ fontFamily: 'Inter-Medium,Helvetica' }}
-					>
-						FULL NAME
-					</div>
-					<div className='absolute left-[164px] top-[253px] h-[17px] w-[40px]'>
-						<div className='relative h-[17px] w-[38px] rounded-[5px] bg-[#00000061]'>
-							<div
-								className='absolute left-[4px] top-[3px] text-[8px] font-bold leading-[normal] tracking-[0.64px] text-[#ffffffd6]'
-								style={{ fontFamily: 'Inter-Bold,Helvetica' }}
+					<Box className='flex flex-col items-center justify-center text-center'>
+						<Box className='text-[19px] font-medium tracking-[1.52px] text-white'>
+							{fullName}
+						</Box>
+						<Box
+							className='flex flex-row gap-3 text-[10px] text-white'
+							key='tags'
+						>
+							<Box
+								className='flex h-[17px] w-[17px] cursor-pointer items-center justify-center rounded-[5px] bg-[#00000061] text-[15px]'
+								onClick={handleClickOpen}
+								key='+'
 							>
-								Family
-							</div>
-						</div>
-					</div>
-					<div className='absolute left-[215px] top-[253px] h-[17px] w-[40px]'>
-						<div className='relative h-[17px] w-[38px] rounded-[5px] bg-[#00000061]'>
-							<div
-								className='absolute left-[11px] top-[3px] text-[8px] font-bold leading-[normal] tracking-[0.64px] text-[#ffffffd6]'
-								style={{ fontFamily: 'Inter-Bold,Helvetica' }}
+								+
+							</Box>
+							<Dialog
+								open={open}
+								onClose={handleClickOpen}
+								sx={{
+									'& .MuiDialog-paper': {
+										width: '376px',
+										height: '200px',
+										background: '#1b3a70',
+										borderRadius: '40px'
+									}
+								}}
 							>
-								Job
-							</div>
-						</div>
-					</div>
-					<StarBorderPurple500OutlinedIcon className='h-[25px] w-[26px] text-white' />
-					<div className='absolute left-[92px] top-[285px] h-[32px] w-[33px] rounded-[11px] bg-[#3b66b1]'>
-						<LocalPhoneOutlinedIcon className='h-[21px] w-[21px] text-white' />
-					</div>
-					<div className='absolute left-[182px] top-[285px] h-[32px] w-[33px] rounded-[11px] bg-[#3b66b1]'>
-						<VideocamOutlinedIcon className='h-[22px] w-[17px] text-white' />
-					</div>
-					<div className='absolute left-[272px] top-[285px] h-[32px] w-[33px] rounded-[11px] bg-[#3b66b1]'>
-						<ChatOutlinedIcon className='h-[21px] w-[21px] text-white' />
-					</div>
-					<div className='absolute left-[134px] top-[253px] h-[17px] w-[17px] rounded-[8px] bg-[#00000061]'>
-						<AddIcon className='h-[9px] w-[9px] text-white' />
-					</div>
-					<div className='absolute left-[52px] top-[385px] h-[32px] w-[285px]'>
-						<div className='relative h-[32px] w-[283px] rounded-[11px] bg-[#3b66b1]'>
+								<DialogContent
+									sx={{
+										display: 'flex',
+										justifyContent: 'center',
+										alignItems: 'center'
+									}}
+								>
+									<AffectTags contactId={{ id }} handleClose={handleClose} />
+								</DialogContent>
+							</Dialog>
+							{tags.map(tag => (
+								<Box
+									key={tag.id}
+									className='flex items-center justify-center rounded-[5px] bg-[#00000061] px-1'
+								>
+									{tag.name}
+								</Box>
+							))}
+						</Box>
+					</Box>
+					<Box className='mt-3 flex flex-row items-center gap-16'>
+						<Box className='flex h-[32px] w-[33px] items-center justify-center rounded-[11px] bg-[#3b66b1]'>
 							<LocalPhoneOutlinedIcon className='h-[21px] w-[21px] text-white' />
-							<div
-								className='absolute left-[39px] top-[8px] text-[13px] font-medium leading-[normal] tracking-[1.04px] text-white'
-								style={{ fontFamily: 'Inter-Medium,Helvetica' }}
-							>
-								+212606060606
-							</div>
-						</div>
-					</div>
-					<div className='absolute left-[52px] top-[525px] h-[32px] w-[285px]'>
-						<div className='relative h-[32px] w-[283px] rounded-[11px] bg-[#3b66b1]'>
-							<FmdGoodOutlinedIcon className='h-[22px] w-[17px] text-white' />
-							<div
-								className='absolute left-[40px] top-[8px] text-[13px] font-medium leading-[normal] tracking-[1.04px] text-white'
-								style={{ fontFamily: 'Inter-Medium,Helvetica' }}
-							>
-								Marrakech , Maroc ....
-							</div>
-						</div>
-					</div>
-					<div className='absolute left-[52px] top-[455px] h-[32px] w-[285px]'>
-						<div className='relative h-[32px] w-[283px] rounded-[11px] bg-[#3b66b1]'>
+						</Box>
+						<Box className='flex h-[32px] w-[33px] items-center justify-center rounded-[11px] bg-[#3b66b1]'>
+							<VideocamOutlinedIcon className='h-[22px] w-[17px] text-white' />
+						</Box>
+						<Box className='flex h-[32px] w-[33px] items-center justify-center rounded-[11px] bg-[#3b66b1]'>
 							<ChatOutlinedIcon className='h-[21px] w-[21px] text-white' />
-							<a
-								className='absolute left-[39px] top-[8px] text-[13px] font-medium leading-[normal] tracking-[1.04px] text-white'
-								href='mailto:email@email.com'
-								rel='noopener noreferrer'
-								target='_blank'
-							>
-								email@email.com
-							</a>
-						</div>
-					</div>
-					<EditOutlinedIcon className='h-[25px] w-[25px] text-white' />
-					<DeleteOutlineOutlinedIcon className='h-[25px] w-[25px] text-white' />
+						</Box>
+					</Box>
+				</Box>
+				<Box className='mt-16 flex w-full flex-col items-center justify-center gap-11 text-white'>
+					<Box
+						className='flex h-[32px] w-[283px] flex-row items-center gap-5 rounded-[11px] bg-[#3b66b1]'
+						key='phone'
+					>
+						<LocalPhoneOutlinedIcon className='ml-3 h-[21px] w-[21px] text-white' />
+						<Box className='text-[13px] font-medium leading-[normal] tracking-[1.04px] text-white'>
+							{phoneNumber}
+						</Box>
+					</Box>
+					<Box
+						className='flex h-[32px] w-[283px] flex-row items-center gap-5 rounded-[11px] bg-[#3b66b1]'
+						key='email'
+					>
+						<ChatOutlinedIcon className='ml-3 h-[21px] w-[21px] text-white' />
+						<Box className='text-[13px] font-medium leading-[normal] tracking-[1.04px] text-white'>
+							{email}
+						</Box>
+					</Box>
+					<Box
+						className='flex h-[32px] w-[283px] flex-row items-center gap-5 rounded-[11px] bg-[#3b66b1]'
+						key='address'
+					>
+						<FmdGoodOutlinedIcon className='ml-3 h-[22px] w-[17px] text-white' />
+						<Box className='text-[13px] font-medium leading-[normal] tracking-[1.04px] text-white'>
+							{address}
+						</Box>
+					</Box>
+				</Box>
+				<Box className='mt-[5.9rem] flex h-[89px] w-full flex-row items-center justify-center gap-24 rounded-[0px_0px_50px_50px] bg-[#214789] shadow-[0px_4px_4px_#00000040]'>
+					<Box>
+						{favorite ? (
+							<StarIcon
+								className='cursor-pointer text-orange-400'
+								sx={{ fontSize: '2.3em' }}
+								onClick={onFavoriteContact}
+							/>
+						) : (
+							<StarBorderPurple500OutlinedIcon
+								className=' cursor-pointer text-white'
+								sx={{ fontSize: '2.3em' }}
+								onClick={onFavoriteContact}
+							/>
+						)}
+					</Box>
+					<Box>
+						<button
+							onClick={handleClickOpenUpdate}
+							disabled={!selectedContact.value.active}
+						>
+							<EditOutlinedIcon
+								className='text-white'
+								sx={{ fontSize: '2.3em' }}
+							/>
+						</button>
+					</Box>
+					<Dialog
+						open={openUpdate}
+						onClose={handleCloseUpdate}
+						sx={{
+							'& .MuiDialog-paper': {
+								width: '387px',
+								height: '720px',
+								background: '#1b3a70',
+								borderRadius: '50px'
+							}
+						}}
+					>
+						<DialogContent
+							sx={{
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center'
+							}}
+						>
+							<AddContact handleClose={handleCloseUpdate} type='Update' />
+						</DialogContent>
+					</Dialog>
+					<Box>
+						<button
+							onClick={onDeleteContact}
+							disabled={!selectedContact.value.active}
+						>
+							<DeleteOutlineOutlinedIcon
+								className='text-white'
+								sx={{ fontSize: '2.3em' }}
+							/>
+						</button>
+					</Box>
 				</Box>
 			</Box>
 		</Box>

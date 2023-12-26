@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react'
 import LoadingOrError from '../LoadingOrError'
 
+import { signal } from '@preact/signals-react'
+
 describe('<LoadingOrError />', () => {
 	it('renders', () => {
 		render(<LoadingOrError />)

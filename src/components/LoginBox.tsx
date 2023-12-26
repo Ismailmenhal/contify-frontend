@@ -1,14 +1,31 @@
 import { Grid, TextField } from '@mui/material'
+import { useMutation } from '@tanstack/react-query'
+import LoginRequest from 'api/LoginRequest'
 import { Form, Formik } from 'formik'
 import { useState, type ReactElement } from 'react'
+import type ISignIn from 'types/ISignIn'
+
 import * as yup from 'yup'
 
 export default function SignUpBox(): ReactElement {
-	const handleFormSubmit = (values: any, { resetForm }: any) => {}
 	const [user, setUser] = useState({
 		email: '',
 		password: ''
 	})
+	const { mutate, isLoading } = useMutation({
+		mutationFn: async (credentials: ISignIn) => LoginRequest(credentials),
+		onSuccess: response => {
+			localStorage.setItem('token', response.accessToken)
+			localStorage.setItem('userInfos', JSON.stringify(response.userInfos))
+			return true
+		},
+		onError: error => false
+	})
+	const handleFormSubmit = (values: any, { resetForm }: any) => {
+		mutate(values as ISignIn)
+		resetForm()
+		window.location.href = '/allPeople'
+	}
 	const validateInput = yup.object().shape({
 		email: yup.string().required('Required Input'),
 		password: yup.string().required('Required Input')
@@ -91,13 +108,13 @@ export default function SignUpBox(): ReactElement {
 							</Grid>
 						</Grid>
 						<div className='mt-4'>
-							<a href='/login' className='w-full'>
+							<button type='submit' className='w-full'>
 								<div className='flex h-16 w-full items-center justify-center rounded-full bg-[#1b3a6f]'>
 									<div className='text-lg font-bold leading-normal tracking-wider text-white'>
 										Login
 									</div>
 								</div>
-							</a>
+							</button>
 						</div>
 					</Form>
 				)}

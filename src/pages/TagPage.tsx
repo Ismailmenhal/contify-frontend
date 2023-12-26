@@ -1,33 +1,19 @@
-import Box from '@mui/material/Box'
-import FormControl from '@mui/material/FormControl'
-import MenuItem from '@mui/material/MenuItem'
-import Select from '@mui/material/Select'
+import { Box, FormControl, MenuItem, Select } from '@mui/material'
 import { signal } from '@preact/signals-react'
 import { useQuery } from '@tanstack/react-query'
-import getContacts from 'api/getContacts'
-import { searchTerm } from 'components/SideBar'
+import getContactByTag from 'api/getContactByTag'
+import ContactInfosBox from 'components/ContactInfosBox'
+import ContactRowBox from 'components/ContactRowBox'
+import { searchTerm, selectedTag } from 'components/SideBar'
 import type { ReactElement } from 'react'
-import type ITag from 'types/ITag'
-import ContactInfosBox from '../components/ContactInfosBox'
-import ContactRowBox from '../components/ContactRowBox'
+import { selectedContact } from './AllPeople'
 
-export const selectedContact = signal({
-	id: JSON.parse(localStorage.getItem('userInfos')).id,
-	fullName: JSON.parse(localStorage.getItem('userInfos')).fullName,
-	phoneNumber: JSON.parse(localStorage.getItem('userInfos')).phoneNumber,
-	email: JSON.parse(localStorage.getItem('userInfos')).email,
-	address: JSON.parse(localStorage.getItem('userInfos')).address,
-	imageContact: '',
-	tags: [{ name: 'Me' }] as ITag[],
-	active: false,
-	favorite: false
-})
-
-export default function AllPeople(): ReactElement {
+export default function TagPage(): ReactElement {
 	const { isLoading, isError, error, data } = useQuery(
-		['contacts'],
-		getContacts
+		['contactsTag', selectedTag.value.id],
+		getContactByTag
 	)
+	console.log(data)
 	function sortContacts(a, b) {
 		if (a.fullName < b.fullName) {
 			return -1
@@ -54,7 +40,7 @@ export default function AllPeople(): ReactElement {
 					{contacts.value?.length || 0} TOTAL
 				</p>
 				<p className='my-5 text-[21px] font-bold leading-[normal] tracking-[1.68px] text-black'>
-					Contacts
+					Contacts - {selectedTag.value.name}
 				</p>
 			</Box>
 			<Box className='flex flex-row gap-2'>
@@ -91,7 +77,6 @@ export default function AllPeople(): ReactElement {
 						.sort()
 						.map(letter => {
 							const contactsForLetter = groupedContacts[letter] ?? []
-
 							const filteredContactsForLetter = searchTerm.value
 								? contactsForLetter
 										.sort(sortContacts)
