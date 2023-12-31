@@ -50,6 +50,11 @@ export default function SideBar({
 	const handleToggle = () => {
 		setIsOpen(!isOpen)
 	}
+	const logout = () => {
+		localStorage.setItem('userInfos', '')
+		localStorage.setItem('token', '')
+		window.location.reload()
+	}
 	const handleSearchChange = e => {
 		searchTerm.value = e.target.value
 	}
@@ -296,13 +301,13 @@ export default function SideBar({
 											}`}
 										/>
 									</button>
-									<a href='/'>
+									<button onClick={logout}>
 										<ExitToApp
 											className={`mr-2 h-8 w-6 ${
 												isSmall && !isOpen ? 'invisible' : 'visible'
 											}`}
 										/>
-									</a>
+									</button>
 								</div>
 							</div>
 						</div>

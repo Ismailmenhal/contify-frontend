@@ -15,6 +15,7 @@ export default function SignUpBox(): ReactElement {
 	const { mutate, isLoading } = useMutation({
 		mutationFn: async (credentials: ISignIn) => LoginRequest(credentials),
 		onSuccess: response => {
+			console.log(response)
 			localStorage.setItem('token', response.accessToken)
 			localStorage.setItem('userInfos', JSON.stringify(response.userInfos))
 			return true
@@ -24,7 +25,9 @@ export default function SignUpBox(): ReactElement {
 	const handleFormSubmit = (values: any, { resetForm }: any) => {
 		mutate(values as ISignIn)
 		resetForm()
-		window.location.href = '/allPeople'
+		setTimeout(() => {
+			window.location.href = '/allPeople'
+		}, 200)
 	}
 	const validateInput = yup.object().shape({
 		email: yup.string().required('Required Input'),

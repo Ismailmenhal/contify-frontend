@@ -12,11 +12,21 @@ import ContactInfosBox from '../components/ContactInfosBox'
 import ContactRowBox from '../components/ContactRowBox'
 
 export const selectedContact = signal({
-	id: JSON.parse(localStorage.getItem('userInfos')).id,
-	fullName: JSON.parse(localStorage.getItem('userInfos')).fullName,
-	phoneNumber: JSON.parse(localStorage.getItem('userInfos')).phoneNumber,
-	email: JSON.parse(localStorage.getItem('userInfos')).email,
-	address: JSON.parse(localStorage.getItem('userInfos')).address,
+	id: localStorage.getItem('userInfos')
+		? JSON.parse(localStorage.getItem('userInfos'))?.id
+		: 0,
+	fullName: localStorage.getItem('userInfos')
+		? JSON.parse(localStorage.getItem('userInfos'))?.fullName
+		: '',
+	phoneNumber: localStorage.getItem('userInfos')
+		? JSON.parse(localStorage.getItem('userInfos'))?.phoneNumber
+		: '',
+	email: localStorage.getItem('userInfos')
+		? JSON.parse(localStorage.getItem('userInfos'))?.email
+		: '',
+	address: localStorage.getItem('userInfos')
+		? JSON.parse(localStorage.getItem('userInfos'))?.address
+		: '',
 	imageContact: '',
 	tags: [{ name: 'Me' }] as ITag[],
 	active: false,
